@@ -2,15 +2,16 @@ import './Login.css';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../UserContext';
+import { useUser } from '../../context/UserContext';
+import { PrimaryButton, Headers, FloatingLabelInput } from '../../components';
 
 export function Login() {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
   const { setUser } = useUser(); // 👈 use context
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     axios.post('http://localhost:3001/user/login', { email, password })
       .then(result => {
@@ -41,12 +42,19 @@ export function Login() {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type='email' placeholder='Email' onChange={(e) => setEmail(e.target.value)} required />
-        <input type='password' placeholder='Password' onChange={(e) => setPassword(e.target.value)} required />
-        <button type='submit'>Log in</button>
-      </form>
-    </div>
+
+      <div className="login-content">
+        <Headers label='Login' />
+        <form onSubmit={handleSubmit}>
+         
+          <FloatingLabelInput type='email' name='email' label='Email' onChange={(e) => setEmail(e.target.value)}/>
+          <FloatingLabelInput type='password' name='password' label='Password' onChange={(e) => setPassword(e.target.value)}/>
+          <PrimaryButton type='submit' label='Login'  />
+        </form>
+        <div className="signup">Don't have an account? <span>Sign up for free</span></div>
+        
+      </div>
+    
+ 
   );
 }

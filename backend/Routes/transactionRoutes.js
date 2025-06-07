@@ -7,7 +7,7 @@ router.post('/add-transaction', async(request, response) => {
     try {
         const transaction = new Transaction(request.body);
         await transaction.save();
-        response.status(2001).json(transaction);
+        response.status(201).json(transaction);
     } catch(err) {
         response.status(400).json({error: err.message});
     }

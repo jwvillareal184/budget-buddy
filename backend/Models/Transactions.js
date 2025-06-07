@@ -20,7 +20,7 @@ const transactionSchema = new mongoose.Schema({
     },
     dateCreated: {
         type: String,
-        require: true
+        required: true
     }
 })
 

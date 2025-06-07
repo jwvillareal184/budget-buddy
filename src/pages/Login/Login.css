@@ -1,0 +1,33 @@
+:root {
+    --Color1: #3B1C32;
+    --White: #fff;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.login-content {
+    background-color: var(--White);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: space-between;
+    width: 100%;
+    max-width: 400px;
+    height: 100%;
+    max-height: 500px;
+    border-radius: 25px;
+    padding: 2rem;
+}
+form {
+    height: 100%;
+    max-height: 350px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: space-between;
+    gap:0.7rem;
+}

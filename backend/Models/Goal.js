@@ -14,10 +14,6 @@ const goalSchema = new mongoose.Schema({
     type: Number,
     default: 0 // Starts at 0, will increase over time
   },
-  transacType: {
-    type: String,
-    required: true
-  },
   description: {
     type: String,
     required: true

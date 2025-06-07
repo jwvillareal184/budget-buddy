@@ -3,7 +3,7 @@ const router = express.Router();
 const Goal = require('../Models/Goal');
 
 // Create a transaction
-router.post('/create', async (req, res) => {
+router.post('/add-goal', async (req, res) => {
   try {
     const transaction = new Goal(req.body);
     await transaction.save();
@@ -13,30 +13,30 @@ router.post('/create', async (req, res) => {
   }
 });
 
-// Get all transactions for a specific user
-router.get('/by-user/:userId', async (req, res) => {
+// Get all goals for a specific user
+router.get('/by-user', async (req, res) => {
+  const userId = req.query.userId;
   try {
-    const transactions = await Goal.find({ user: req.params.userId }).populate('user');
-    res.json(transactions);
+    const goals = await Goal.find({ user: userId }).populate('user');
+    res.json(goals);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // Update a transaction by ID and user ID (combined filter)
-router.put('/update/:transactionId', async (req, res) => {
+router.put('/update-goal', async (req, res) => {
   try {
-    const { transactionId } = req.params;
-    const { userId } = req.query;
+    const { goalId, userId, ...updateData } = req.body;
 
     const updated = await Goal.findOneAndUpdate(
-      { _id: transactionId, user: userId },
-      req.body,
+      { _id: goalId, user: userId },
+      updateData,
       { new: true }
     );
 
     if (!updated) {
-      return res.status(404).json({ error: 'Transaction not found or not owned by user' });
+      return res.status(404).json({ error: 'Goal not found or not owned by user' });
     }
 
     res.json(updated);
@@ -46,13 +46,11 @@ router.put('/update/:transactionId', async (req, res) => {
 });
 
 // Delete a transaction by ID and user ID
-router.delete('/delete/:transactionId', async (req, res) => {
+router.delete('/delete-goal', async (req, res) => {
+  const { goalId, userId } = req.body;
   try {
-    const { transactionId } = req.params;
-    const { userId } = req.query;
-
     const deleted = await Goal.findOneAndDelete({
-      _id: transactionId,
+      _id: goalId,
       user: userId
     });
 

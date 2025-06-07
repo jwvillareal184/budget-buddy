@@ -1,0 +1,154 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --Color1: #3B1C32;
+    --Color2: #6A1E55;
+    --Color3: #A64D79;
+    --White: #fff;
+}
+
+.primarybtn, .secondarybtn {
+    width:100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.primarybtn {
+    background-color: var(--Color2);
+    color: var(--White);
+    border: 2px solid var(--Color2);
+}
+
+.primarybtn:hover {
+  background-color: var(--Color1);
+  border: 2px solid var(--Color1);
+
+}
+
+.secondarybtn {
+    background-color: var(--White);
+    border: 2px solid var(--Color3);
+    color: var(--Color3);
+}
+
+.secondarybtn:hover {
+  background-color: var(--Color3);
+  color: var(--White);
+}
+
+.header {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.wrapper {
+    margin-bottom: 1.5rem;
+  }
+  
+  .inputGroup {
+    position: relative;
+    margin-top: 1.5rem;
+  }
+  
+  .inputField {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid var(--Color3);
+    border-radius: 6px;
+    outline: none;
+    background: var(--White);
+    transition: border 0.2s;
+  }
+  
+  .inputField:focus {
+    border-color: var(--Color1);
+  }
+  
+  .inputField::placeholder {
+    color: transparent;
+  }
+  
+  .inputLabel {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: var(--Color3);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all 0.2s ease-out;
+    background: var(--White);
+    padding: 0 4px;
+  }
+  
+  .focused .inputLabel,
+  .inputField:not(:placeholder-shown) + .inputLabel {
+    top: -8px;
+    left: 8px;
+    font-size: 0.75rem;
+    color: var(--Color1);
+  }
+  
+  .error {
+    border-color: red;
+  }
+  
+  .inputError {
+    color: red;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: block;
+  }
+
+  /*MODAL*/
+
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modalContent {
+    background: white;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modalClose {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  .modalTitle {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+  }
+  
+  .modalBody {
+    font-size: 16px;
+  }
+  
+  

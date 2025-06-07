@@ -1,18 +1,9 @@
 import {useState} from 'react';
 import axios from 'axios';
 
-interface User {
-    fname: string;
-    lname: string;
-    email: string;
-    phoneNum: number;
-    birthday: string;
-    occupation: string;
-    password: string;
 
-}
 export function SignUp() {
-    const [userData, setUserData] = useState<User>({
+    const [userData, setUserData] = useState({
         fname: '',
         lname: '',
         email: '',
@@ -24,7 +15,7 @@ export function SignUp() {
 
     console.log(userData)
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e) => {
         const { name, value } = e.target;
       
         setUserData(prev => ({
@@ -35,6 +26,7 @@ export function SignUp() {
       
 
     const createNewUser = () => {
+            console.log(userData);
             axios.post('http://localhost:3001/user/register', userData).then(response => {
             console.log('User Created', response.data)
             alert('User data registered sucessfully!');

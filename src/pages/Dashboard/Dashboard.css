@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --Color1: #3B1C32;
+    --Color2: #6A1E55;
+    --Color3: #A64D79;
+    --White: #fff;
+}
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    align-content: space-between;
+    background-color: var(--White);
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+}
