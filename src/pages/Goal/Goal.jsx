@@ -2,6 +2,8 @@ import {useState, useEffect} from 'react';
 import { useUser } from '../../context/UserContext';
 import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal} from '../../components';
 import { fetchGoals, addGoal, updateGoal, deleteGoal } from '../../services/GoalServices';
+import '../../styles/styles.css';
+import { timeStampConverter } from '../../utils/timeStampConverter';
 
 export const Goal = () => {
     const {user} = useUser();
@@ -31,7 +33,7 @@ export const Goal = () => {
             targetAmount: Number(goalData.targetAmount),
             currentAmount: Number(goalData.currentAmount),
             user: user._id,
-            dateCreated: new Date(goalData.dateCreated).toISOString(),
+            dateCreated: new Date().toISOString(),
         };
 
         try {
@@ -94,51 +96,26 @@ export const Goal = () => {
     console.log(goals);
     return(
         <div className="Goal">
-        <PrimaryButton label="Add Goal" onClick={() => {
-              setIsEditing(false); // reset editing state
-              setEditId(null);     // clear any existing ID
-              setGoalData({ // clear input fields
-                currentAmount: '',
-                targetAmount: '',
-                description: '',
-                dateCreated: new Date().toISOString().split('T')[0],
-              });
-              setModalOpen(true);  // finally open modal
-            }}
-          />
+        <div className="headers-btn-div">
+            <Headers label="Goals" />
+            <div>
+                <PrimaryButton label="Add Goal" onClick={() => {
+                    setIsEditing(false); // reset editing state
+                    setEditId(null);     // clear any existing ID
+                    setGoalData({ // clear input fields
+                        currentAmount: '',
+                        targetAmount: '',
+                        description: '',
+                        dateCreated: new Date().toISOString().split('T')[0],
+                    });
+                    setModalOpen(true);  // finally open modal
+                    }}
+                />
+            </div>
+        </div>
 
-        <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit Goal' : 'Add Goal'}>
-        <form onSubmit={handleSubmit}>
-            <FloatingLabelInput
-                label="Current Amount"
-                type="number"
-                value={goalData.currentAmount}
-                onChange={handleChange}
-                name="currentAmount"
-            />
-            <FloatingLabelInput
-                label="Target Amount"
-                type="number"
-                value={goalData.targetAmount}
-                onChange={handleChange}
-                name="targetAmount"
-            />
-            <FloatingLabelInput
-                label="Description"
-                type="text"
-                value={goalData.description}
-                onChange={handleChange}
-                name="description"
-            />
-            <PrimaryButton label={isEditing ? 'Update Goal' : 'Create Goal'} type="submit" />
-        </form>
-            <SecondaryButton label='Close' onClick={() => setModalOpen(false)} />
-        </Modal>
             {user ? (
                 <div>
-                    {user.fname}
-              
-
                     <div className="table-container">
                         <table>
                           <thead>
@@ -157,8 +134,8 @@ export const Goal = () => {
                                         <td>{goal.currentAmount}</td>
                                         <td>{goal.targetAmount}</td>
                                         <td>{goal.description}</td>
-                                        <td>{goal.dateCreated}</td>
-                                        <td>
+                                        <td>{timeStampConverter(goal.dateCreated)}</td>
+                                        <td className='action-btn'>
                                             <PrimaryButton label='edit' onClick={() => handleEdit(goal)}/>
                                             <SecondaryButton label='delete' onClick={() => deleteGoalData(goal._id, user._id)}/>
                                         </td>
@@ -169,12 +146,40 @@ export const Goal = () => {
                                     <td colSpan="5">No goals found.</td>
                                 </tr>
                             )}
-
                           </tbody>
-
-                            
                         </table>
                     </div>
+
+                    <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit Goal' : 'Add Goal'}>
+                        <form onSubmit={handleSubmit}>
+                            <FloatingLabelInput
+                                label="Current Amount"
+                                type="number"
+                                value={goalData.currentAmount}
+                                onChange={handleChange}
+                                name="currentAmount"
+                            />
+                            <FloatingLabelInput
+                                label="Target Amount"
+                                type="number"
+                                value={goalData.targetAmount}
+                                onChange={handleChange}
+                                name="targetAmount"
+                            />
+                            <FloatingLabelInput
+                                label="Description"
+                                type="text"
+                                value={goalData.description}
+                                onChange={handleChange}
+                                name="description"
+                            />
+                            <div className="btn-container">
+                                <PrimaryButton label={isEditing ? 'Update Goal' : 'Create Goal'} type="submit" />
+                                <SecondaryButton label='Close' onClick={() => setModalOpen(false)} />
+                            </div>
+                        </form>
+                            
+                    </Modal>
                 </div>
                 
             ) :

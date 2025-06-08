@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '../../context/UserContext';
-import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal} from '../../components';
+import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal, Card} from '../../components';
 import {fetchTransactions,addTransaction,updateTransaction,deleteTransaction} from '../../services/TransactionServices';
-import './style.css';
+import '../../styles/styles.css';
+import { timeStampConverter } from '../../utils/timeStampConverter';
 
 
 export const Expense = () => {
@@ -32,7 +33,7 @@ export const Expense = () => {
     const transaction = {
       ...transactionData,
       amount: Number(transactionData.amount),
-      dateCreated: new Date(transactionData.dateCreated).toISOString(),
+      dateCreated: new Date().toISOString(),
     };
   
     try {
@@ -63,7 +64,10 @@ export const Expense = () => {
   
 
   const fetchExpenses = async () => {
-    await fetchTransactions(user._id).then(data => setExpenses(data));
+    await fetchTransactions(user._id).then(data => {
+      const filteredDataExpense = data.filter(transac => transac.transacType === 'expense');
+      setExpenses(filteredDataExpense);
+    });
   }
 
   const deleteExpense = async (itemId, userId) => {
@@ -98,77 +102,85 @@ export const Expense = () => {
 
   return (
     <div className="Expense">
-      <div>
+      <div className='headers-btn-div'>
         <Headers label="Expenses" />
       
-        <PrimaryButton label="Add Expense" onClick={() => {
-              setIsEditing(false); // reset editing state
-              setEditId(null);     // clear any existing ID
-              setTransactionData({ // clear input fields
-                amount: '',
-                transacType: 'expense',
-                description: '',
-                dateCreated: new Date().toISOString().split('T')[0],
-              });
-              setModalOpen(true);  // finally open modal
-            }}
-          />
-          <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit expense' : 'Add Expense'}>
-            
-          <form onSubmit={handleSubmit}>
-            <FloatingLabelInput
-              label="Amount"
-              type="number"
-              value={transactionData.amount}
-              onChange={handleChange}
-              name="amount"
+        <div>
+          <PrimaryButton label="Add Expense" onClick={() => {
+                setIsEditing(false); // reset editing state
+                setEditId(null);     // clear any existing ID
+                setTransactionData({ // clear input fields
+                  amount: '',
+                  transacType: 'expense',
+                  description: '',
+                  dateCreated: new Date().toISOString().split('T')[0],
+                });
+                setModalOpen(true);  // finally open modal
+              }}
             />
-            <FloatingLabelInput
-              label="Transaction Type"
-              type="text"
-              value={transactionData.transacType}
-              onChange={handleChange}
-              name="transacType"
-            />
-            <FloatingLabelInput
-              label="Description"
-              type="text"
-              value={transactionData.description}
-              onChange={handleChange}
-              name="description"
-            />
-            <PrimaryButton label={isEditing ? 'Update Expense' : 'Create Expense'} type="submit" />
-          </form>
-          <SecondaryButton label='Close' onClick={() => setModalOpen(false)} />
-          </Modal>
+        </div>
       </div>
 
       {user ? (
         <div>
-          <p>{user._id}</p>
-          <p>{user.fname}</p>
           <div className="table-container">
             <table>
-              <tr>
-                <th>Amount</th>
-                <th>Description</th>
-                <th>Date Created</th>
-                <th>Actions</th>
-              </tr>
+              <thead>
+                <tr>
+                  <th>Amount</th>
+                  <th>Description</th>
+                  <th>Date Created</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+            <tbody>
               {!expenses ? (
-                <div>no data</div>
-              ) : (
-                expenses.map(expense => (
-                  <tr key={expense._id}>
-                      <td>{expense.amount}</td>
-                      <td>{expense.description}</td>
-                      <td>{expense.dateCreated}</td>
-                      <td><PrimaryButton label='edit'onClick={() => handleEdit(expense)} /> <SecondaryButton label='delete' onClick={() => deleteExpense(expense._id, user._id)}/></td>
-                  </tr>
-                )) 
-              )}
+                  <div>no data</div>
+                ) : (
+                  expenses.map(expense => (
+                    <tr key={expense._id}>
+                        <td>{expense.amount}</td>
+                        <td>{expense.description}</td>
+                        <td>{timeStampConverter(expense.dateCreated)}</td>
+                        <td className='action-btn'><PrimaryButton label='edit'onClick={() => handleEdit(expense)} /> <SecondaryButton label='delete' onClick={() => deleteExpense(expense._id, user._id)}/></td>
+                    </tr>
+                  )) 
+                )}
+            </tbody>
             </table>
           </div>
+          <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit expense' : 'Add Expense'}>
+            
+            <form onSubmit={handleSubmit}>
+              <FloatingLabelInput
+                label="Amount"
+                type="number"
+                value={transactionData.amount}
+                onChange={handleChange}
+                name="amount"
+              />
+              <FloatingLabelInput
+                label="Transaction Type"
+                type="text"
+                value={transactionData.transacType}
+                onChange={handleChange}
+                name="transacType"
+              />
+              <FloatingLabelInput
+                label="Description"
+                type="text"
+                value={transactionData.description}
+                onChange={handleChange}
+                name="description"
+              />
+             
+             <div className="btn-container">
+                <PrimaryButton label={isEditing ? 'Update Expense' : 'Create Expense'} type="submit" />
+                <SecondaryButton label='Close' onClick={() => setModalOpen(false)} />
+             </div>
+            </form>
+           
+          </Modal>
         </div>
       ) : (
         <div>Loading</div>

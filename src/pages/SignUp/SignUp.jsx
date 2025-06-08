@@ -1,8 +1,11 @@
 import {useState} from 'react';
 import axios from 'axios';
-
+import {useNavigate} from 'react-router-dom';
+import { FloatingLabelInput, PrimaryButton, SecondaryButton, Headers } from '../../components';
+import './SignUp.css';
 
 export function SignUp() {
+    const navigate = useNavigate();
     const [userData, setUserData] = useState({
         fname: '',
         lname: '',
@@ -13,7 +16,7 @@ export function SignUp() {
         password: ''
     });
 
-    console.log(userData)
+    console.log(userData);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -23,8 +26,6 @@ export function SignUp() {
           [name]: name === 'phoneNum' ? Number(value) : value
         }));
       };
-      
-
     const createNewUser = () => {
             console.log(userData);
             axios.post('http://localhost:3001/user/register', userData).then(response => {
@@ -37,36 +38,28 @@ export function SignUp() {
             alert('Failed to register the user.');
         })
     }
+
+    const backToLogin = () => {
+        navigate('/login');
+    }
     return(
-        <div>
-            <div>
-                <div>Sign Up</div>
-                <form>
-                    <div>
-                        <input type="text" name="fname" id="fname" placeholder='First Name' onChange={handleChange} required />
-                        <input type="text" name="lname" id="lname" placeholder='Last Name' onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <input type="email" name="email" id="email" placeholder='Email' onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <input type="text" name="phoneNum" id="phoneNum" placeholder='Phone Number' onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <input type="date" name="birthday" id="birthday" placeholder='Birthday' onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <input type="text" name="occupation" id="occupation" placeholder='Occupation' onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <input type="password" name="password" id="password" placeholder='Password' onChange={handleChange} required />
-                    </div>
-                    <div>
-                        <button type="button" onClick={createNewUser}>Sign Up</button>
-                    </div>
-                    <div>
-                        <button type="button">Back</button>
-                    </div>
+        <div className='container-signup'>
+            <div className='signup-content'>
+                <Headers label='Sign Up' />
+                <form>      
+                        <div className="name">
+                            <FloatingLabelInput name='fname' id='fname' onChange={handleChange} label='First Name' />
+                            <FloatingLabelInput name='lname' id='lname' onChange={handleChange} label='Last Name' />
+                        </div>
+                        <FloatingLabelInput type='email' name='email' id='email' onChange={handleChange} label='Email' />
+                        <FloatingLabelInput name='phoneNum' id='phoneNum' onChange={handleChange} label='Contact Number' />
+                        <FloatingLabelInput type='date' name='birthday' id='birthday' onChange={handleChange} label='BirthDay' />   
+                        <FloatingLabelInput name='occupation' id='occupation' onChange={handleChange} label='Occupation' />  
+                        <FloatingLabelInput type='password' name='password' id='password' onChange={handleChange} label='Password' />  
+                       <div className="btn-container">
+                            <PrimaryButton type='button' onClick={createNewUser} label='Create User' />
+                            <SecondaryButton type='button' label='Back' onClick={() => backToLogin()} />
+                       </div>
                 </form>
             </div>
         </div>

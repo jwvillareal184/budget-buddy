@@ -1,4 +1,4 @@
-import styles from './styles.module.css'
+import styles from '../styles/styles.module.css';
 
 export const SecondaryButton = ({label, onClick, type='button', className=''}) => {
     return(

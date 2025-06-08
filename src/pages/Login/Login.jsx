@@ -41,19 +41,24 @@ export function Login() {
       });
   };
 
+  const goToSignUp = () => {
+    navigate('/register');
+  }
+
   return (
 
+    <div className="container-login">
       <div className="login-content">
         <Headers label='Login' />
         <form onSubmit={handleSubmit}>
-         
           <FloatingLabelInput type='email' name='email' label='Email' onChange={(e) => setEmail(e.target.value)}/>
           <FloatingLabelInput type='password' name='password' label='Password' onChange={(e) => setPassword(e.target.value)}/>
           <PrimaryButton type='submit' label='Login'  />
         </form>
-        <div className="signup">Don't have an account? <span>Sign up for free</span></div>
+        <div className="signup">Don't have an account? <span onClick={() => goToSignUp()}>Sign up for free</span></div>
         
       </div>
+    </div>
     
  
   );

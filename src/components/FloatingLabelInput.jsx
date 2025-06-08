@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./styles.module.css";
+import styles from '../styles/styles.module.css';
 
 export const FloatingLabelInput = ({ label, type = "text", value, onChange, name, error }) => {
   const [focused, setFocused] = useState(false);

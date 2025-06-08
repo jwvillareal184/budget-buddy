@@ -2,6 +2,8 @@ import {useState, useEffect} from "react";
 import {useUser} from '../../context/UserContext';
 import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal} from '../../components';
 import {fetchTransactions,addTransaction,updateTransaction,deleteTransaction} from '../../services/TransactionServices';
+import '../../styles/styles.css';
+import { timeStampConverter } from "../../utils/timeStampConverter";
 
 
 export const Income = () => {
@@ -30,7 +32,7 @@ export const Income = () => {
         const transaction = {
             ...incomeData,
             amount: Number(incomeData.amount),                     
-            dateCreated: new Date(incomeData.dateCreated).toISOString(),
+            dateCreated: new Date().toISOString(),
           };
           try {
             console.log(transaction);
@@ -59,7 +61,11 @@ export const Income = () => {
     }
 
     const fetchIncomes = async () => {
-        await fetchTransactions(user._id).then(data => setIncomes(data));
+        await fetchTransactions(user._id).then(data => {
+          const filteredDataExpense = data.filter(transac => transac.transacType === 'income');
+          setIncomes(filteredDataExpense);
+        });
+       
       }
     
       const deleteIncome = async (itemId, userId) => {
@@ -93,9 +99,10 @@ export const Income = () => {
     
 
     return (
-        <div>
-            <div>
+        <div className="Income">
+            <div className="headers-btn-div">
                 <Headers label="Income" />
+                <div>
                 <PrimaryButton label="Add Income" onClick={() => {
                       setIsEditing(false); // reset editing state
                       setEditId(null);     // clear any existing ID
@@ -108,6 +115,7 @@ export const Income = () => {
                       setModalOpen(true);  // finally open modal
                     }}
                  />
+                </div>
             </div>
 
             <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit Income' : 'Add Income'}>
@@ -133,28 +141,32 @@ export const Income = () => {
                   onChange={handleChange}
                   name="description"
                 />
+                <div className="btn-container">
                 <PrimaryButton label={isEditing ? 'Update Income' : 'Create Income'} type="submit" />
+                <SecondaryButton label='Close' onClick={() => setModalOpen(false)} />
+                </div>
               </form>
-              <SecondaryButton label='Close' onClick={() => setModalOpen(false)} />
+             
             </Modal>
             
         {user ? (
          <div>
-         <p>{user._id}</p>
-         <p>{user.fname}</p>
          <div className="modal">
 
          </div>
 
          <div className="table-container">
            <table>
-             <tr>
+            <thead>
+            <tr>
                <th>Amount</th>
                <th>Description</th>
                <th>Date Created</th>
                <th>Actions</th>
              </tr>
-             {!incomes  ? (
+            </thead>
+            <tbody>
+            {!incomes  ? (
                 <div>no data</div>
              ) 
              : (
@@ -162,14 +174,12 @@ export const Income = () => {
                     <tr key={income._id}>
                         <td>{income.amount}</td>
                         <td>{income.description}</td>
-                        <td>{income.dateCreated}</td>
-                        <td><PrimaryButton label='edit' onClick={() => handleEdit(income)}/> <SecondaryButton label='delete' onClick={() => deleteIncome(income._id, user._id)}/></td>
+                        <td>{timeStampConverter(income.dateCreated)}</td>
+                        <td className="action-btn"><PrimaryButton label='edit' onClick={() => handleEdit(income)}/> <SecondaryButton label='delete' onClick={() => deleteIncome(income._id, user._id)}/></td>
                     </tr>
                   )) 
              )}
-        {/*
-              */}
-         
+            </tbody>         
            </table>
          </div>
        </div>
