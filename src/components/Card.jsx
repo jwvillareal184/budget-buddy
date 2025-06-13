@@ -1,13 +1,13 @@
 import styles from '../styles/styles.module.css';
 
-export const Card = () => {
+export const Card = ({cardTitle, children}) => {
     return (
         <div className={styles.cardContainer}>
-            <div className={styles.weeklyIncomeDesc}>
-                Total Income weekly
+            <div className={styles.cardTitle}>
+                {cardTitle}
             </div>
-            <div className="incomeDiv">
-                12000
+            <div className={styles.cardBody}>
+               {children}
             </div>
         </div>
     )

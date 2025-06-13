@@ -178,7 +178,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 1000px;
+  max-width: 1010px;
 }
 
 .logo {
@@ -200,6 +200,7 @@
     flex-direction: row;
     justify-content: space-between;
     gap: 10px;
+    overflow-x: auto;
     
 }
 
@@ -220,5 +221,24 @@
   border-radius: 50px;
 }
 
+.cardContainer {
+  background-color: var(--White);
+  min-width: 250px; 
+  border-radius: 12px;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardTitle{
+  font-size: 1.5rem;
+  color: var(--Color2);
+  font-weight: bold;
+}
+.cardBody {
+  display: flex;
+  justify-content: center;
+}
   
   

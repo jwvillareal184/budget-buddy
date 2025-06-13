@@ -15,9 +15,13 @@
     align-items: center;
     width: 100vw;
     height: 100vh;
+    position: relative;
+    overflow: hidden;
 }
 
 .signup-content {
+    position: relative;
+    z-index: 1;
     background-color: #fff;
     display: flex;
     flex-direction: column;
@@ -39,4 +43,10 @@
 .name {
     display: flex;
     justify-content: space-between;
+}
+
+@media(max-width: 579px) {
+    .container-signup{
+        padding: 10px;
+    }
 }

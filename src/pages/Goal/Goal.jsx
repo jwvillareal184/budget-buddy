@@ -1,9 +1,9 @@
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useMemo} from 'react';
 import { useUser } from '../../context/UserContext';
 import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal} from '../../components';
 import { fetchGoals, addGoal, updateGoal, deleteGoal } from '../../services/GoalServices';
 import '../../styles/styles.css';
-import { timeStampConverter } from '../../utils/timeStampConverter';
+import { timeStampConverter } from '../../utils/helper';
 
 export const Goal = () => {
     const {user} = useUser();
@@ -17,6 +17,21 @@ export const Goal = () => {
         description: '',
         dateCreated: new Date().toISOString().split('T')[0],
     });
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10; // You can change this number
+  
+    const paginatedGoals = useMemo(() => {
+      if (!goals || goals.length === 0) return [];
+      const indexOfLastItem = currentPage * itemsPerPage;
+      const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+      return goals.slice(indexOfFirstItem, indexOfLastItem);
+    }, [goals, currentPage, itemsPerPage]);
+  
+    const totalPages = useMemo(() => {
+      return goals ? Math.ceil(goals.length / itemsPerPage) : 0;
+    }, [goals, itemsPerPage]);
+  
 
     const handleChange = (e) => {
         const {name, value} = e.target;
@@ -120,36 +135,58 @@ export const Goal = () => {
                         <table>
                           <thead>
                           <tr>
-                                <th>Current amount</th>
-                                <th>Target amount</th>
                                 <th>Description</th>
                                 <th>Date Created</th>
                                 <th>Actions</th>
                             </tr>
                           </thead>
                           <tbody>
-                          {goals && goals.length > 0 ? (
-                                goals.map(goal => (
-                                    <tr key={goal._id}>
-                                        <td>{goal.currentAmount}</td>
-                                        <td>{goal.targetAmount}</td>
-                                        <td>{goal.description}</td>
-                                        <td>{timeStampConverter(goal.dateCreated)}</td>
-                                        <td className='action-btn'>
-                                            <PrimaryButton label='edit' onClick={() => handleEdit(goal)}/>
-                                            <SecondaryButton label='delete' onClick={() => deleteGoalData(goal._id, user._id)}/>
+                                {goals && goals.length > 0 ? (
+                                    paginatedGoals.map((goal) => {
+                                    const progress = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100); // clamp at 100%
+
+                                    return (
+                                        <tr key={goal._id}>
+                                        <td>
+                                            <div className="desc-progress">
+                                                <p className='desc'>{goal.description}</p>
+                                                <p className='currentAmount'>{goal.currentAmount}</p>/
+                                                <p className='targetAmount'>{goal.targetAmount}</p>
+                                            </div>
+                                            <div className="progress-bar-container">
+                                            <div className="progress-bar" style={{ width: `${progress}%` }}>
+                                                {Math.floor(progress)}%
+                                            </div>
+                                            </div>
                                         </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
+                                        <td>{timeStampConverter(goal.dateCreated)}</td>
+                                        <td className="action-btn">
+                                            <PrimaryButton label="edit" onClick={() => handleEdit(goal)} />
+                                            <SecondaryButton label="delete" onClick={() => deleteGoalData(goal._id, user._id)} />
+                                        </td>
+                                        </tr>
+                                    );
+                                    })
+                                ) : (
+                                    <tr>
                                     <td colSpan="5">No goals found.</td>
-                                </tr>
-                            )}
-                          </tbody>
+                                    </tr>
+                                )}
+                                </tbody>
+
                         </table>
                     </div>
-
+                    <div className="pagination">
+                        {Array.from({ length: totalPages }, (_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => setCurrentPage(index + 1)}
+                            className={currentPage === index + 1 ? 'active-page' : ''}
+                        >
+                            {index + 1}
+                        </button>
+                        ))}
+                    </div>
                     <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit Goal' : 'Add Goal'}>
                         <form onSubmit={handleSubmit}>
                             <FloatingLabelInput

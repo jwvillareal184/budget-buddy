@@ -5,6 +5,8 @@ export * from './FloatingLabelInput';
 export * from './Modal';
 export * from './Sidebar';
 export * from './Card';
+export * from './Particles';
+export * from './PieChart';
 
 
 

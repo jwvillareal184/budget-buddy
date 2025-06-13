@@ -17,7 +17,7 @@ function App() {
   const hideNavbar = !user || ['/login', '/register'].includes(location.pathname);
 
   return (
-    <div className='container'>
+    <div className='whole-container'>
       {!hideNavbar && <Navbar />}
       <Routes>
         <Route path="/login" element={<Login />} />

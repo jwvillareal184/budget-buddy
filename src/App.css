@@ -9,7 +9,7 @@
     box-sizing: border-box;
 }
 
-.container {
+.whole-container {
     background-color: #ccc;
     width: 100vw;
     height: 100vh;

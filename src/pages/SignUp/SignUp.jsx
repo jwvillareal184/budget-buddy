@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
-import { FloatingLabelInput, PrimaryButton, SecondaryButton, Headers } from '../../components';
+import { FloatingLabelInput, PrimaryButton, SecondaryButton, Headers, Particles } from '../../components';
 import './SignUp.css';
 
 export function SignUp() {
@@ -44,6 +44,16 @@ export function SignUp() {
     }
     return(
         <div className='container-signup'>
+            <Particles
+                particleColors={['#6A1E55', '#A64D79']}
+                particleCount={200}
+                particleSpread={10}
+                speed={0.1}
+                particleBaseSize={200}
+                moveParticlesOnHover={true}
+                alphaParticles={false}
+                disableRotation={false}
+                />
             <div className='signup-content'>
                 <Headers label='Sign Up' />
                 <form>      

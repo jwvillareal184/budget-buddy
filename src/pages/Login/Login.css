@@ -16,9 +16,13 @@
     align-items: center;
     width: 100vw;
     height: 100vh;
+    position: relative;
+    overflow: hidden;
 }
 
 .login-content {
+    position: relative;
+    z-index: 1;
     background-color: var(--White);
     display: flex;
     flex-direction: column;
@@ -50,4 +54,10 @@ form {
 .signup span {
     font-weight: bold;
     cursor: pointer;
+}
+
+@media(max-width: 579px) {
+    .container-login{
+        padding: 10px;
+    }
 }
