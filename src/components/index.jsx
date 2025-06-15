@@ -7,6 +7,10 @@ export * from './Sidebar';
 export * from './Card';
 export * from './Particles';
 export * from './PieChart';
+export * from './Carousel';
+export * from './Loader';
+export * from './ProtectedRoutes';
+
 
 
 

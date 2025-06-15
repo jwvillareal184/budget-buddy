@@ -37,7 +37,7 @@
 }
 form {
     height: 100%;
-    max-height: 350px;
+    min-height: 350px;
     display: flex;
     flex-direction: column;
     justify-content: center;

@@ -161,16 +161,17 @@
     font-size: 16px;
   }
 
-  /*SIDEBAR*/
-
-  .sidebarContainer {
-    width: 100vw;
-    background-color: var(--Color2);
-    color: var(--White);
-    height: 65px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+ /* === SIDEBAR === */
+.sidebarContainer {
+  width: 100vw;
+  background-color: var(--Color2);
+  color: var(--White);
+  height: 65px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1000;
 }
 
 .navbarContent {
@@ -179,40 +180,38 @@
   align-items: center;
   width: 100%;
   max-width: 1010px;
+  padding: 0 16px;
 }
 
 .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    background-color: var(--Color1);
-    color: var(--White);
-    padding: 1rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  background-color: var(--Color1);
+  color: var(--White);
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* === Navigation Links === */
 .navMenu ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    padding: 1rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 10px;
-    overflow-x: auto;
-    
+  list-style-type: none;
+  margin: 0;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .navMenu li {
-    margin: 1rem 0;
+  margin: 1rem 0;
 }
 
 .navMenu a {
-    text-decoration: none;
-    color: white;
-    transition: color 0.3s;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-decoration: none;
+  color: var(--White);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: color 0.3s;
 }
 
 .navMenu a:hover {
@@ -220,6 +219,117 @@
   font-weight: 500;
   border-radius: 50px;
 }
+
+/* === Burger Button (Mobile Only) === */
+.burgerButton {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  display: none;
+  cursor: pointer;
+  color: var(--White);
+  z-index: 1100;
+}
+
+/* === User Profile + Dropdown === */
+.userMenuWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.userIcon {
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.userDropdown {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: 110%;
+  background: white;
+  color: black;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  min-width: 140px;
+  z-index: 100;
+  flex-direction: column;
+}
+
+.userMenuWrapper:hover .userDropdown {
+  display: flex;
+}
+
+.userDropdown button {
+  padding: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.userDropdown button:hover {
+  background: #f0f0f0;
+}
+
+/* === Mobile Menu (Shown When Burger is Clicked) === */
+.mobileMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: white;
+  color: black;
+  padding: 16px;
+  position: absolute;
+  width: 100%;
+  top: 65px;
+  left: 0;
+  z-index: 999;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.mobileMenu a,
+.mobileMenu button {
+  text-decoration: none;
+  text-align: left;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  padding: 8px 0;
+  cursor: pointer;
+  color: var(--Color1);
+  width: 100%;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.mobileMenu button:hover,
+.mobileMenu a:hover {
+  background-color: var(--Color3);
+  color: var(--White);
+}
+
+.successIcon {
+  width: 100%;
+}
+
+
+/* === Media Query: Show Burger Icon on Small Screens === */
+@media (max-width: 700px) {
+  .navMenu {
+    display: none;
+  }
+
+  .userMenuWrapper {
+    display: none;
+  }
+
+  .burgerButton {
+    display: block;
+  }
+}
+
 
 .cardContainer {
   background-color: var(--White);
@@ -240,5 +350,108 @@
   display: flex;
   justify-content: center;
 }
+
+/*CAROUSEL*/
+.carouselContainer {
+  overflow-x: hidden;
   
-  
+  width: 100%;
+  margin: 0 auto;
+  text-transform: capitalize;
+}
+
+.carouselTrack {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  width: 100%; 
+}
+
+.slide {
+  height: 220px;
+  flex: 0 0 100%;
+  box-sizing: border-box;
+  border-radius: 12px;
+  background-color: var(--Color3);
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 8px var(--Color1);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.progressCircle {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+}
+
+.bg {
+  fill: none;
+  stroke: var(--White);
+  stroke-width: 3.8;
+}
+
+.fg {
+  fill: none;
+  stroke: var(--Color2);
+  stroke-width: 3.8;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.text {
+  fill: var(--Color1);
+  font-size: 0.5rem;
+  text-anchor: middle;
+}
+.goalTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+}
+
+.goalAmount {
+  font-size: 0.875rem;
+  color: var(--Color1);
+}
+
+.goalDescription {
+  text-align: center;
+}
+/*LOADER*/
+
+.loaderOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid var(--Color2);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

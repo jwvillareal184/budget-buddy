@@ -1,17 +1,18 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useUser } from '../../context/UserContext';
-import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal, Card, PieChart} from '../../components';
-import {fetchTransactions,addTransaction,updateTransaction,deleteTransaction} from '../../services/TransactionServices';
-import '../../styles/styles.css';
-import { timeStampConverter, GroupByCategory } from '../../utils/helper';
+import { useUser } from '../context/UserContext';
+import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal, Card, PieChart, Loader} from '../components';
+import {fetchTransactions,addTransaction,updateTransaction,deleteTransaction} from '../services/TransactionServices';
+import '../styles/styles.module.css';
+import { timeStampConverter, GroupByCategory } from '../utils/helper';
 
 
-export const Income = () => {
+export const Expense = () => {
   const { user } = useUser();
+  const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
   const [isModalOpen, setModalOpen] = useState(false);
-  const[incomes, setIncomes] = useState();
+  const[expenses, setExpenses] = useState();
   const [transactionData, setTransactionData] = useState({
     amount: '',
     transacType: 'expense',
@@ -19,38 +20,39 @@ export const Income = () => {
     description: '',
     dateCreated: new Date().toISOString().split('T')[0],
   });
-
-  const weeklyIncomes = useMemo(() => {
-    if (!incomes) return [];
+  
+  const weeklyExpenses = useMemo(() => {
+    if (!expenses) return [];
   
     const now = new Date();
     const startOfWeek = new Date(now);
     startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
     startOfWeek.setHours(0, 0, 0, 0);
   
-    return incomes.filter(income => {
-      const date = new Date(income.dateCreated);
-      return date >= startOfWeek && date <= now;
+    return expenses.filter(exp => {
+      const expDate = new Date(exp.dateCreated);
+      return expDate >= startOfWeek && expDate <= now;
     });
-  }, [incomes]);
+  }, [expenses]);
 
-  const totalWeeklyIncome = useMemo(() => {
-    return weeklyIncomes.reduce((sum, income) => sum + Number(income.amount), 0);
-  }, [weeklyIncomes]);
+  const totalWeeklyExpense = useMemo(() => {
+    return weeklyExpenses.reduce((sum, exp) => sum + Number(exp.amount), 0);
+  }, [weeklyExpenses]);
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // You can change this number
 
-  const paginatedIncomes = useMemo(() => {
-    if (!incomes || incomes.length === 0) return [];
+  const paginatedExpenses = useMemo(() => {
+    if (!expenses || expenses.length === 0) return [];
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    return incomes.slice(indexOfFirstItem, indexOfLastItem);
-  }, [incomes, currentPage, itemsPerPage]);
+    return expenses.slice(indexOfFirstItem, indexOfLastItem);
+  }, [expenses, currentPage, itemsPerPage]);
 
   const totalPages = useMemo(() => {
-    return incomes ? Math.ceil(incomes.length / itemsPerPage) : 0;
-  }, [incomes, itemsPerPage]);
+    return expenses ? Math.ceil(expenses.length / itemsPerPage) : 0;
+  }, [expenses, itemsPerPage]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,6 +64,7 @@ export const Income = () => {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     const transaction = {
       ...transactionData,
       amount: Number(transactionData.amount),
@@ -81,7 +84,7 @@ export const Income = () => {
   
       setTransactionData({
         amount: '',
-        transacType: 'income',
+        transacType: 'expense',
         description: '',
         category: '',
         dateCreated: new Date().toISOString().split('T')[0],
@@ -89,82 +92,99 @@ export const Income = () => {
       setEditId(null);
       setIsEditing(false);
       setModalOpen(false);
-      fetchIncomes();
+      fetchExpenses();
     } catch (error) {
       console.error('Error adding/updating transaction:', error);
+    } finally {
+      setLoading(false);
     }
   };
   
 
-  const fetchIncomes = async () => {
+  const fetchExpenses = async () => {
+    setLoading(true);
+   try {
     await fetchTransactions(user._id).then(data => {
-      const filteredDataIncome = data.filter(transac => transac.transacType === 'income');
-      setIncomes(filteredDataIncome);
-      localStorage.setItem('incomes', JSON.stringify(filteredDataIncome));
+      const filteredDataExpense = data.filter(transac => transac.transacType === 'expense');
+      setExpenses(filteredDataExpense);
+      localStorage.setItem('expenses', JSON.stringify(filteredDataExpense));
     });
+   } catch (err) {
+    console.error(err);
+   } finally {
+    setLoading(false);
+   }
   }
 
-  const deleteIncomes = async (itemId, userId) => {
-    await deleteTransaction(itemId,userId).then(response => {
-      alert('Item deleted successfully');
-      console.log(response);
-      fetchIncomes();
-    })
+  const deleteExpense = async (itemId, userId) => {
+    setLoading(true);
+    try {
+      await deleteTransaction(itemId,userId).then(response => {
+        alert('Item deleted successfully');
+        console.log(response);
+        fetchExpenses();
+      })
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const handleEdit = (income) => {
+  const handleEdit = (expense) => {
     setTransactionData({
-      amount: income.amount,
-      transacType: income.transacType,
-      description: income.description,
-      category: income.category,
-      dateCreated: income.dateCreated.split('T')[0],
+      amount: expense.amount,
+      transacType: expense.transacType,
+      description: expense.description,
+      category: expense.category,
+      dateCreated: expense.dateCreated.split('T')[0],
     });
-    setEditId(income._id);
+    setEditId(expense._id);
     setIsEditing(true);
     setModalOpen(true);
   };
   
   useEffect(() => {
-    if (!user) return;  
-    const cached = JSON.parse(localStorage.getItem('incomes'));
-    if (cached) setIncomes(cached); 
-    console.log('cache',cached)
-    fetchIncomes();
+    if (!user) return; 
+    const cached = JSON.parse(localStorage.getItem('expenses'));
+    if (cached) setExpenses(cached); 
+    fetchExpenses();
   }, [user]);
+
   
-  console.log('Incomes per account',incomes);
+  
+  console.log('Expenses per account',expenses);
   console.log(isEditing)
 
 
   
   return (
     <div className='container'>
+      {loading && <Loader />}
       <div className='cardsContainer'>
-      <Card cardTitle='Weekly Incomes'>
-        <div>
-          <Headers label={`₱ ${totalWeeklyIncome.toFixed(2)}`} />
-        </div>
-      </Card>
-
-        <Card cardTitle='Where Your Money Comes From'>
+        <Card cardTitle='Weekly Expenses'>
+          <div>
+            <Headers label={`₱ ${totalWeeklyExpense.toFixed(2)}`} />
+          </div>
+        </Card>
+        <Card cardTitle='Where Your Money Goes'>
             <div>
-               <PieChart transactions={weeklyIncomes} />
+            <PieChart transactions={weeklyExpenses} />
             </div>
         </Card>
       </div>
        {user ? (
-          <div className="Income">
+          <div className="Expense">
               <div className='headers-btn-div'>
-                <Headers label="Incomes" />
+                <Headers label="Expenses" />
               
                 <div>
-                  <PrimaryButton label="Add Income" onClick={() => {
+                  <PrimaryButton label="Add Expense" onClick={() => {
                         setIsEditing(false); // reset editing state
                         setEditId(null);     // clear any existing ID
                         setTransactionData({ // clear input fields
                           amount: '',
-                          transacType: 'income',
+                          transacType: 'expense',
                           description: '',
                           category: '',
                           dateCreated: new Date().toISOString().split('T')[0],
@@ -187,22 +207,23 @@ export const Income = () => {
                       </tr>
                     </thead>
                   <tbody>
-                    {!incomes ? (
+                    {!expenses ? (
                         <div>no data</div>
                       ) : (
-                        paginatedIncomes.map(income => (
-                          <tr key={income._id}>
-                              <td>{income.amount}</td>
-                              <td className='desc'>{income.description}</td>
-                              <td className='category'>{income.category}</td>
-                              <td>{timeStampConverter(income.dateCreated)}</td>
-                              <td className='action-btn'><PrimaryButton label='edit'onClick={() => handleEdit(income)} /> <SecondaryButton label='delete' onClick={() => deleteIncomes(income._id, user._id)}/></td>
+                        paginatedExpenses.map(expense => (
+                          <tr key={expense._id}>
+                              <td>{expense.amount}</td>
+                              <td className='desc'>{expense.description}</td>
+                              <td className='category'>{expense.category}</td>
+                              <td>{timeStampConverter(expense.dateCreated)}</td>
+                              <td className='action-btn'><PrimaryButton label='edit'onClick={() => handleEdit(expense)} /> <SecondaryButton label='delete' onClick={() => deleteExpense(expense._id, user._id)}/></td>
                           </tr>
                         )) 
                       )}
                   </tbody>
                   </table>
                 </div>
+
                 <div className="pagination">
                     {Array.from({ length: totalPages }, (_, index) => (
                       <button
@@ -214,7 +235,7 @@ export const Income = () => {
                       </button>
                     ))}
                   </div>
-                <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit Income' : 'Add Income'}> 
+                <Modal isOpen={isModalOpen} onClose={() => setModalOpen(false)} title={isEditing ? 'Edit expense' : 'Add Expense'}> 
                   <form onSubmit={handleSubmit}>
                     <FloatingLabelInput
                       label="Amount"
@@ -245,7 +266,7 @@ export const Income = () => {
                       name="category"
                     />
                   <div className="btn-container">
-                      <PrimaryButton label={isEditing ? 'Update Income' : 'Create Income'} type="submit" />
+                      <PrimaryButton label={isEditing ? 'Update Expense' : 'Create Expense'} type="submit" />
                       <SecondaryButton label='Close' onClick={() => setModalOpen(false)} />
                   </div>
                   </form>

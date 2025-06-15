@@ -1,3 +1,6 @@
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
 * {
     margin: 0;
     padding: 0;
@@ -19,7 +22,7 @@
     max-width: 1000px;
 }
 
-.Expense, .Income, .Goal {
+.Expense, .Income, .Goal, .Profile {
     width: 100%;
     height: auto;
     background-color: #fff;
@@ -38,8 +41,13 @@
     width: 100%;
 }
 
-.Goal, .Dashboard {
+.Goal, .Dashboard, .Profile {
     max-width: 1000px;
+}
+.dashboard-content, .profile-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .headers-btn-div {
@@ -130,7 +138,6 @@ tr:last-child {
     border-radius: 10px;
     transition: width 0.4s ease;
   }
-  
   .cardsContainer {
     display: flex;
     flex-direction: column;
@@ -138,14 +145,12 @@ tr:last-child {
     gap: 1rem;
 
   }
-
   .pagination {
     margin-top: 1rem;
     display: flex;
     gap: 8px;
     justify-content: center;
   }
-  
   .pagination button {
     padding: 6px 12px;
     border: 1px solid #ccc;
@@ -153,43 +158,116 @@ tr:last-child {
     cursor: pointer;
     border-radius: 4px;
   }
-  
   .pagination .active-page {
     background-color: var(--Color2);
     color: white;
     font-weight: bold;
   }
-  .row, .col {
+
+  .row-greetings {
+    padding-top: 20px;
+  }
+
+  .row-line-progress-chart {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 1rem;
+    gap: 10px;
   }
-  .col {
-    flex-direction: column;
-  }
-  .greetings-container, .current-weather, .numbers, .lineChart {
+  .greetings-container, .current-weather, .numbers, .lineChart, .goal-carousel, .transaction-table {
     background-color: var(--White);
     border-radius: 12px;
     height: auto;
     width: 100%;
     padding: 1rem;
   }
-
   .current-weather {
     max-width: 320px;
   }
-
   .numbers {
     display: flex;
     flex-direction: column;
   }
   .lineChart {
     width: 100%;
-    max-width: 780px;
-    height: 100%;
-    max-height: 458px;
+    max-width: 630px;
   }
+  .goal-carousel {
+    width: 100%;
+    max-width: 360px;
+  }
+  .greetings-container {
+    height: 150px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 16px;
+    padding: 2rem;
+    overflow: visible;
+    background: linear-gradient(180deg, #6A1E55, #A64D79);
+  }
+  .greetings-img {
+    position: absolute;
+    right: 25px;       
+    top: 47%;
+    transform: translateY(-50%);
+    height: 160px;
+    width: auto;
+  }
+
+  .row-numbers {
+    display: flex;
+    gap: 10px;
+  }
+  
+/*transaction table in dashboard*/
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.75rem;
+}
+
+.pagination button {
+  padding: 0.5rem 1rem;
+  background-color: var(--Color3);
+  color: var(--Color1);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/*SHOW HIDE PASSWORD*/
+.show-hide-pass {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.flex-grow {
+  flex: 1;
+}
+
+.toggle-pass-btn {
+  flex-shrink: 0;
+  padding: 12px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: #6a1e55;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
   @media (max-width: 1250px) {
     .container {
@@ -197,9 +275,22 @@ tr:last-child {
     }
   }
 
-  @media (max-width: 950px) {
+  @media (max-width: 980px) {
+    .row-line-progress-chart {
+      flex-direction: column;
+      gap: 10px;
+      box-sizing: border-box;
+    }
+    .goal-carousel, .lineChart {
+      max-width: none;
+    }
     .container {
         flex-direction: column;
         width: 100%;
+    }
+  }
+  @media (max-width: 500px) {
+    .row-numbers {
+      flex-direction: column;
     }
   }

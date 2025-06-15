@@ -15,9 +15,11 @@ router.post('/register', async(request, response) => {
         const {fname, lname, email, phoneNum, birthday, occupation, password} = request.body;
         const existingUser = await User.findOne({ email });
 
-        if (existingUser) {
-            console.log('there is existing email or user');
-        }
+      
+    if (existingUser) {
+      console.log('There is an existing email or user');
+      return response.status(409).json({ message: 'Email already in use' });
+    }
         
         // the number of rounds that will be hashed the entered password
        const saltRounds = 10;
@@ -102,8 +104,6 @@ router.post('/login', async (req, res) => {
     }
   });
   
-  
-
 router.get('/users', requireAuth, async(request, response) => {
     try{
         const user = await User.find();
@@ -121,7 +121,6 @@ router.get('/me', requireAuth, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 router.put('/users/:id', requireAuth, async(request, response) => {
     try {

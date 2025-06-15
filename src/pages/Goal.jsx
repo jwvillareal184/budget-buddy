@@ -1,12 +1,13 @@
 import {useState, useEffect, useMemo} from 'react';
-import { useUser } from '../../context/UserContext';
-import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal} from '../../components';
-import { fetchGoals, addGoal, updateGoal, deleteGoal } from '../../services/GoalServices';
-import '../../styles/styles.css';
-import { timeStampConverter } from '../../utils/helper';
+import { useUser } from '../context/UserContext';
+import {Headers,PrimaryButton,FloatingLabelInput, SecondaryButton, Modal, Loader} from '../components';
+import { fetchGoals, addGoal, updateGoal, deleteGoal } from '../services/GoalServices';
+import '../styles/styles.module.css';
+import { timeStampConverter } from '../utils/helper';
 
 export const Goal = () => {
     const {user} = useUser();
+    const [loading, setLoading] = useState(false);
     const [goals, setGoals] = useState();
     const [isEditing, setIsEditing] = useState(false);
     const [editId, setEditId] = useState(null);
@@ -43,53 +44,71 @@ export const Goal = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         const data = {
-            ...goalData,
-            targetAmount: Number(goalData.targetAmount),
-            currentAmount: Number(goalData.currentAmount),
-            user: user._id,
-            dateCreated: new Date().toISOString(),
+          ...goalData,
+          targetAmount: Number(goalData.targetAmount),
+          currentAmount: Number(goalData.currentAmount),
+          user: user._id,
+          dateCreated: new Date().toISOString(),
         };
-
+      
         try {
-            console.log(data);
-            if(isEditing) {
-                await updateGoal({
-                    goalId: editId,
-                    userId: user._id,
-                    ...data,
-                });
-            } else {
-                await addGoal(data);
-            }
-            setGoalData({
-                currentAmount: '',
-                targetAmount: '',
-                description: '',
-                dateCreated: new Date().toISOString().split('T')[0],
+          if (isEditing) {
+            await updateGoal({
+              goalId: editId,
+              userId: user._id,
+              ...data,
             });
-            setEditId(null);
-            setIsEditing(false);
-            setModalOpen(false);
-            fetchGoalData();
+          } else {
+            await addGoal(data);
+          }
+      
+          setGoalData({
+            currentAmount: '',
+            targetAmount: '',
+            description: '',
+            dateCreated: new Date().toISOString().split('T')[0],
+          });
+          setEditId(null);
+          setIsEditing(false);
+          setModalOpen(false);
+          await fetchGoalData(); // wait for updated list
         } catch (error) {
-            console.error('Error adding the goal', error);
+          console.error('Error adding the goal', error);
+        } finally {
+          setLoading(false); // ✅ always reset
         }
+      };
+      
+      const fetchGoalData = async () => {
+        setLoading(true);
+        try {
+          const data = await fetchGoals(user._id);
+          setGoals(data);
+        } catch (err) {
+          console.error('Failed to fetch goals', err);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    }
-
-    const fetchGoalData = async () => {
-        await fetchGoals(user._id).then(data => setGoals(data));
-        
-    }
-
-    const deleteGoalData = async (goalId, userId) => {
-        const response =  await deleteGoal(goalId, userId).then( response => {
-            alert('Item deleted successfully');
-        });
-        console.log(response);
-        fetchGoalData();
-    }
+      const deleteGoalData = async (goalId, userId) => {
+        const confirm = window.confirm('Are you sure you want to delete this goal?');
+        if (!confirm) return;
+      
+        setLoading(true);
+        try {
+          await deleteGoal(goalId, userId);
+          alert('Item deleted successfully');
+          await fetchGoalData();
+        } catch (err) {
+          console.error('Failed to delete goal:', err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      
 
     const handleEdit = (goal) => {
         setGoalData({
@@ -110,7 +129,10 @@ export const Goal = () => {
 
     console.log(goals);
     return(
+        
         <div className="Goal">
+            {loading && <Loader />}
+
         <div className="headers-btn-div">
             <Headers label="Goals" />
             <div>

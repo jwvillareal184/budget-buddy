@@ -1,32 +1,40 @@
-import { Routes, Route, useLocation } from 'react-router-dom';
-import { Login } from './pages/Login';
-import { Dashboard } from './pages/Dashboard';
-import { Expense } from './pages/Expense';
-import { Income } from './pages/Income';
-import { Goal } from './pages/Goal';
-import { Profile } from './pages/Profile';
-import { SignUp } from './pages/SignUp';
+import { Routes, Route, useLocation, Navigate, Link } from 'react-router-dom';
+import {
+  ForgotPassword, Login, Dashboard, Expense,
+  Income, Goal, Profile, SignUp
+} from './pages';
 import { Navbar } from './components/Navbar';
 import { useUser } from './context/UserContext';
+import { ProtectedRoutes } from './components/ProtectedRoutes';
 import './App.css';
 
 function App() {
   const { user } = useUser();
   const location = useLocation();
 
-  const hideNavbar = !user || ['/login', '/register'].includes(location.pathname);
+  const hideNavbar = !user || ['/login', '/register', '/forgot-password'].includes(location.pathname);
 
   return (
-    <div className='whole-container'>
+    <div className="whole-container">
       {!hideNavbar && <Navbar />}
+
       <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<SignUp />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/expenses" element={<Expense />} />
-        <Route path="/income" element={<Income />} />
-        <Route path="/goals" element={<Goal />} />
-        <Route path="/profile" element={<Profile />} />
+        {/* Public Routes */}
+        <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <SignUp />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        {/* Protected Routes */}
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/expenses" element={<Expense />} />
+          <Route path="/income" element={<Income />} />
+          <Route path="/goals" element={<Goal />} />
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+
+        {/* Catch-All: Not Found / Redirect */}
+        <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
       </Routes>
     </div>
   );

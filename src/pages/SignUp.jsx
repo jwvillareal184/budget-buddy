@@ -1,11 +1,15 @@
 import {useState} from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
-import { FloatingLabelInput, PrimaryButton, SecondaryButton, Headers, Particles } from '../../components';
+import { FloatingLabelInput, PrimaryButton, SecondaryButton, Headers, Particles } from '../components';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+
 import './SignUp.css';
 
 export function SignUp() {
     const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
     const [userData, setUserData] = useState({
         fname: '',
         lname: '',
@@ -26,18 +30,38 @@ export function SignUp() {
           [name]: name === 'phoneNum' ? Number(value) : value
         }));
       };
-    const createNewUser = () => {
-            console.log(userData);
-            axios.post('http://localhost:3001/user/register', userData).then(response => {
-            console.log('User Created', response.data)
-            alert('User data registered sucessfully!');
-        })
-        .catch(error => {
-            console.log('User Created', userData)
-            console.error('Error creating user:',error);
-            alert('Failed to register the user.');
-        })
-    }
+      const createNewUser = () => {
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&._\-])[A-Za-z\d@$!%*?&._\-]{8,}$/;
+      
+        if (!passwordRegex.test(userData.password)) {
+          alert('Password must be at least 8 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+          return;
+        }
+        axios.post('http://localhost:3001/user/register', userData)
+          .then(response => {
+            alert('User registered successfully!');
+            setUserData({
+                fname: '',
+                lname: '',
+                email: '',
+                phoneNum: 0,
+                birthday: '',
+                occupation: '',
+                password: ''
+              });
+              // Redirect to login
+              navigate('/login');
+          })
+          .catch(error => {
+            if (error.response && error.response.status === 409) {
+              alert('Email is already registered!');
+            } else {
+              alert('Failed to register user.');
+            }
+            console.error('Error creating user:', error);
+          });
+      };
+      
 
     const backToLogin = () => {
         navigate('/login');
@@ -65,7 +89,24 @@ export function SignUp() {
                         <FloatingLabelInput name='phoneNum' id='phoneNum' onChange={handleChange} label='Contact Number' />
                         <FloatingLabelInput type='date' name='birthday' id='birthday' onChange={handleChange} label='BirthDay' />   
                         <FloatingLabelInput name='occupation' id='occupation' onChange={handleChange} label='Occupation' />  
-                        <FloatingLabelInput type='password' name='password' id='password' onChange={handleChange} label='Password' />  
+                        <div className="show-hide-pass">
+                        <FloatingLabelInput
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
+                            id="password"
+                            value={userData.password}
+                            onChange={handleChange}
+                            label="Password"
+                            className="flex-grow" // custom class for width control
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(prev => !prev)}
+                            className="toggle-pass-btn"
+                        >
+                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
+                        </button>
+                        </div>
                        <div className="btn-container">
                             <PrimaryButton type='button' onClick={createNewUser} label='Create User' />
                             <SecondaryButton type='button' label='Back' onClick={() => backToLogin()} />

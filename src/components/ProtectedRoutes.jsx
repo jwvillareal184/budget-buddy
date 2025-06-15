@@ -1,15 +1,8 @@
-// components/ProtectedRoute.tsx
+// src/components/ProtectedRoute.jsx
+import { Navigate, Outlet } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
-import React from 'react';
-import { Navigate } from 'react-router-dom';
-
-
-export const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = false; // replace with your real auth logic
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-
-  return <>{children}</>; // valid JSX element
+export const ProtectedRoutes = () => {
+  const { user } = useUser();
+  return user ? <Outlet /> : <Navigate to="/login" replace />;
 };
