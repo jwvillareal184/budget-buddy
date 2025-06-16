@@ -6,8 +6,8 @@ const UserContext = createContext(undefined);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // <- new
 
-  // Auto-login on app load
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -18,7 +18,10 @@ export const UserProvider = ({ children }) => {
       .catch(() => {
         localStorage.removeItem('token');
         setUser(null);
-      });
+      })
+      .finally(() => setLoading(false)); // <- update loading
+    } else {
+      setLoading(false); // <- update loading
     }
   }, []);
 
@@ -27,12 +30,17 @@ export const UserProvider = ({ children }) => {
     setUser(null);
   };
 
+  if (loading) {
+    return <div>Loading...</div>; // Or a custom spinner
+  }
+
   return (
     <UserContext.Provider value={{ user, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );
 };
+
 
 export const useUser = () => {
   const context = useContext(UserContext);

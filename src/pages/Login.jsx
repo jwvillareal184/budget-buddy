@@ -25,7 +25,8 @@ export function Login() {
       .then(result => {
         localStorage.setItem('token', result.data.token);
         setUser(result.data.user);
-        navigate("/dashboard");
+        setTimeout(() => navigate("/dashboard"), 3000);
+        
       })
       .catch(error => {
         // On any error, decrement attempts

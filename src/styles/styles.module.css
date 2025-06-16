@@ -367,7 +367,7 @@
 }
 
 .slide {
-  height: 220px;
+  height: auto;
   flex: 0 0 100%;
   box-sizing: border-box;
   border-radius: 12px;

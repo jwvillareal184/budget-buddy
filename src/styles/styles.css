@@ -172,6 +172,7 @@ tr:last-child {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    align-items: stretch;
     gap: 10px;
   }
   .greetings-container, .current-weather, .numbers, .lineChart, .goal-carousel, .transaction-table {

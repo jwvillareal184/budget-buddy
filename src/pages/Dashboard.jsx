@@ -11,6 +11,8 @@ ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Toolti
 
 export const Dashboard = () => {
   const { user } = useUser();
+  console.log('user',user)
+  const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [incomes, setIncomes] = useState('');
   const [expenses, setExpenses] = useState('');
@@ -104,28 +106,35 @@ export const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (!user?._id) return;
+    if (!user || !user._id) {
+      console.log("User not ready yet...");
+      return;
+    }
+  
+    console.log("User ready:", user);
   
     const fetchAllData = async () => {
       try {
-        await Promise.all([
-          fetchMontlyGoals(),
-          fetchMonthlyTransaction(),
-        ]);
-      } catch (error) {
-        console.error("Error fetching dashboard data:", error);
+        setLoading(true);
+        await Promise.all([fetchMontlyGoals(), fetchMonthlyTransaction()]);
+      } catch (err) {
+        console.error("Error fetching dashboard data", err);
+      } finally {
+        setLoading(false);
       }
     };
   
     fetchAllData();
-  }, [user?._id]);
+  }, [user]);
   
-
   const indexOfLast = currentPage * itemsPerPage;
   const indexOfFirst = indexOfLast - itemsPerPage;
   const currentTransactions = allTransactions.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(allTransactions.length / itemsPerPage);
-
+  if (!user || loading) {
+    return <p>Loading dashboard...</p>;
+  }
+  
   return (
     <div className="Dashboard">
       {user ? (
