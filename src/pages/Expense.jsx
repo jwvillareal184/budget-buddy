@@ -8,6 +8,7 @@ import { timeStampConverter, GroupByCategory } from '../utils/helper';
 
 export const Expense = () => {
   const { user } = useUser();
+  console.log('user', user)
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -92,7 +93,7 @@ export const Expense = () => {
       setEditId(null);
       setIsEditing(false);
       setModalOpen(false);
-      fetchExpenses();
+      fetchExpenses(user._id);
     } catch (error) {
       console.error('Error adding/updating transaction:', error);
     } finally {
@@ -101,10 +102,10 @@ export const Expense = () => {
   };
   
 
-  const fetchExpenses = async () => {
+  const fetchExpenses = async (userId) => {
     setLoading(true);
    try {
-    await fetchTransactions(user._id).then(data => {
+    await fetchTransactions(userId).then(data => {
       const filteredDataExpense = data.filter(transac => transac.transacType === 'expense');
       setExpenses(filteredDataExpense);
       localStorage.setItem('expenses', JSON.stringify(filteredDataExpense));
@@ -122,7 +123,7 @@ export const Expense = () => {
       await deleteTransaction(itemId,userId).then(response => {
         alert('Item deleted successfully');
         console.log(response);
-        fetchExpenses();
+        fetchExpenses(userId);
       })
     } catch (err) {
       console.error(err);
@@ -145,10 +146,18 @@ export const Expense = () => {
   };
   
   useEffect(() => {
-    if (!user) return; 
+    console.log('user in useEffect',user)
+    if (!user) {
+      console.log("User not ready yet...");
+      return;
+    }
+  
+    console.log("User ready:", user);
+    console.log("user._id type:", typeof user.id);
+    const userId = user._id || user.id;
     const cached = JSON.parse(localStorage.getItem('expenses'));
     if (cached) setExpenses(cached); 
-    fetchExpenses();
+    fetchExpenses(userId);
   }, [user]);
 
   

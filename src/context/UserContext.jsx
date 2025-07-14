@@ -5,7 +5,10 @@ import axios from 'axios';
 const UserContext = createContext(undefined);
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [loading, setLoading] = useState(true); // <- new
 
   useEffect(() => {
@@ -17,16 +20,26 @@ export const UserProvider = ({ children }) => {
       .then(res => setUser(res.data.user))
       .catch(() => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         setUser(null);
       })
-      .finally(() => setLoading(false)); // <- update loading
+      .finally(() => setLoading(false));
     } else {
-      setLoading(false); // <- update loading
+      setLoading(false);
     }
   }, []);
+  
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem('user', JSON.stringify(user));
+    } else {
+      localStorage.removeItem('user');
+    }
+  }, [user]);
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user'); 
     setUser(null);
   };
 

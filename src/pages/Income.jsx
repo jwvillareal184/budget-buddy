@@ -91,7 +91,7 @@ export const Income = () => {
       setEditId(null);
       setIsEditing(false);
       setModalOpen(false);
-      fetchIncomes();
+      fetchIncomes(user._id);
     } catch (error) {
       console.error('Error adding/updating transaction:', error);
     } finally {
@@ -100,10 +100,10 @@ export const Income = () => {
   };
   
 
-  const fetchIncomes = async () => {
+  const fetchIncomes = async (userId) => {
     setLoading(true);
     try {
-      await fetchTransactions(user._id).then(data => {
+      await fetchTransactions(userId).then(data => {
         const filteredDataIncome = data.filter(transac => transac.transacType === 'income');
         setIncomes(filteredDataIncome);
         localStorage.setItem('incomes', JSON.stringify(filteredDataIncome));
@@ -121,7 +121,7 @@ export const Income = () => {
     await deleteTransaction(itemId,userId).then(response => {
       alert('Item deleted successfully');
       console.log(response);
-      fetchIncomes();
+      fetchIncomes(userId);
     });
    } catch(err) {
     console.error(err)
@@ -144,11 +144,19 @@ export const Income = () => {
   };
   
   useEffect(() => {
-    if (!user) return;  
+    console.log('user in useEffect',user)
+    if (!user) {
+      console.log("User not ready yet...");
+      return;
+    }
+  
+    console.log("User ready:", user);
+    console.log("user._id type:", typeof user.id);
+    const userId = user._id || user.id;
     const cached = JSON.parse(localStorage.getItem('incomes'));
     if (cached) setIncomes(cached); 
     console.log('cache',cached)
-    fetchIncomes();
+    fetchIncomes(userId);
   }, [user]);
   
   console.log('Incomes per account',incomes);

@@ -52,6 +52,13 @@
     color: var(--Color2);
 }
 
+.whiteHeader {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--White);
+}
+
 .wrapper {
     margin-bottom: 1rem;
   }
@@ -409,7 +416,7 @@
 }
 
 .text {
-  fill: var(--Color1);
+  fill: var(--White);
   font-size: 0.5rem;
   text-anchor: middle;
 }
@@ -421,7 +428,7 @@
 
 .goalAmount {
   font-size: 0.875rem;
-  color: var(--Color1);
+  color: var(--White);
 }
 
 .goalDescription {

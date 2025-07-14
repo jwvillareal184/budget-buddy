@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '../styles/styles.module.css';
-import { Headers } from './Headers';
+import { WhiteHeaders } from './WhiteHeaders';
 
 export const Carousel = ({ goals }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -57,7 +57,7 @@ export const Carousel = ({ goals }) => {
                 </p>
             </div>
             <div className={styles.goalDescription}>
-                    <Headers label={goal.description} />
+                    <WhiteHeaders label={goal.description} />
                 </div>
             </div>
         );

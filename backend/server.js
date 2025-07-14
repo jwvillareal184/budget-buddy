@@ -32,7 +32,7 @@ app.get('/', (req, res) => {
 mongoose.connect(process.env.MONGODBURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(() => {
+  }).then(() => {
     console.log('Connected to MongoDB');
     app.listen(process.env.PORT || 3001, () => {
         console.log(`Server running on http://localhost:${process.env.PORT || 3001}`);

@@ -24,6 +24,7 @@ export function Login() {
     axios.post('http://localhost:3001/user/login', { email, password })
       .then(result => {
         localStorage.setItem('token', result.data.token);
+        localStorage.setItem('user', JSON.stringify(result.data.user)); 
         setUser(result.data.user);
         setTimeout(() => navigate("/dashboard"), 3000);
         

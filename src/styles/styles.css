@@ -276,6 +276,10 @@ tr:last-child {
     }
   }
 
+  @media (max-width: 999px) {
+    
+  }
+
   @media (max-width: 980px) {
     .row-line-progress-chart {
       flex-direction: column;

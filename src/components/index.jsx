@@ -10,6 +10,7 @@ export * from './PieChart';
 export * from './Carousel';
 export * from './Loader';
 export * from './ProtectedRoutes';
+export * from './WhiteHeaders';
 
 
 

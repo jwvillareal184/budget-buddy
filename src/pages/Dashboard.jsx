@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
-import { Headers, Carousel } from '../components';
+import { Headers, Carousel, WhiteHeaders } from '../components';
 import {fetchGoals,fetchTransactions} from '../services';
 import '../styles/styles.css';
 import { Line } from 'react-chartjs-2';
@@ -11,29 +11,49 @@ ChartJS.register(CategoryScale,LinearScale,PointElement,LineElement,Title,Toolti
 
 export const Dashboard = () => {
   const { user } = useUser();
-  console.log('user',user)
+  console.log('user:',user)
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState({ labels: [], datasets: [] });
   const [incomes, setIncomes] = useState('');
+  const [totalIncomes, setTotalIncomes] = useState();
   const [expenses, setExpenses] = useState('');
+  const [totalExpenses, setTotalExpenses] = useState();
   const [goalData, setGoalData] = useState([]);
   const [allTransactions, setAllTransactions] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const balance = incomes - expenses;
 
+  const balance = totalIncomes - totalExpenses;
 
-  const fetchMontlyGoals = async () => {
-    const goals = await fetchGoals(user._id);
+  const fetchTotals = async (userId) => {
+    let allIncome = 0;
+    let allExpense = 0; 
+    const allTotals = await fetchTransactions(userId);
+    console.log('allTotals',allTotals)
+
+    allTotals.forEach(transac => {
+      if (transac.transacType === 'income') {
+        allIncome += transac.amount;
+      } else if (transac.transacType === 'expense') {
+        allExpense += transac.amount;
+      }
+    });
+
+    setTotalExpenses(allExpense);
+    setTotalIncomes(allIncome);
+  }
+
+  const fetchMontlyGoals = async (userId) => {
+    const goals = await fetchGoals(userId);
     setGoalData(goals);
   };
 
-  const fetchMonthlyTransaction = async () => {
+  const fetchMonthlyTransaction = async (userId) => {
     if (!user) return;
 
-    const all = await fetchTransactions(user._id);
+    const all = await fetchTransactions(userId);
     const monthlyMap = {};
 
     all.forEach((t) => {
@@ -106,17 +126,20 @@ export const Dashboard = () => {
   };
 
   useEffect(() => {
-    if (!user || !user._id) {
+    console.log('user in useEffect:', user);
+
+    if (!user) {
       console.log("User not ready yet...");
       return;
     }
   
     console.log("User ready:", user);
-  
+    console.log("user._id type:", typeof user._id);
+    const userId = user._id || user.id;
     const fetchAllData = async () => {
       try {
         setLoading(true);
-        await Promise.all([fetchMontlyGoals(), fetchMonthlyTransaction()]);
+        await Promise.all([fetchMontlyGoals(userId), fetchMonthlyTransaction(userId), fetchTotals(userId)]);
       } catch (err) {
         console.error("Error fetching dashboard data", err);
       } finally {
@@ -141,7 +164,7 @@ export const Dashboard = () => {
         <div className="dashboard-content">
           <div className="row-greetings">
             <div className="greetings-container">
-              <Headers label={`Welcome, ${user.fname}!`} />
+              <WhiteHeaders label={`Welcome, ${user.fname}!`} />
               <img
                 src={greetings}
                 alt="greetings-img"
@@ -175,7 +198,7 @@ export const Dashboard = () => {
 
           <div className="row-numbers">
             <div className="numbers">
-              Monthly Balance
+              Total Balance
               <Headers label={`₱${balance.toFixed(2)}`} />
             </div>
             <div className="numbers">
