@@ -5,6 +5,7 @@ const BASE_URL = 'http://localhost:3001/goals';
 export const fetchGoals = async (userId) => {
     const response = await axios.get(`${BASE_URL}/by-user`, {
         params: {userId},
+        method: 'GET',
     });
 
     return response.data;

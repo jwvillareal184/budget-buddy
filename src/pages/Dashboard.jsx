@@ -31,7 +31,7 @@ export const Dashboard = () => {
     let allIncome = 0;
     let allExpense = 0; 
     const allTotals = await fetchTransactions(userId);
-    console.log('allTotals',allTotals)
+    console.log('allTotals', allTotals)
 
     allTotals.forEach(transac => {
       if (transac.transacType === 'income') {

@@ -13,7 +13,10 @@ const goalRoutes = require('./Routes/goalRoutes');
 const weatherRoutes = require('./Routes/weatherRoutes');
 
 // 3. Middleware
-app.use(cors());                            // Enable CORS first
+app.use(cors(
+    {origin: 'http://localhost:3002' // your React frontend dev URL
+  }
+));                            // Enable CORS first
 app.use(express.json());                    // Then parse JSON body
 app.use(cookieParser());                    // Then parse cookies
 
