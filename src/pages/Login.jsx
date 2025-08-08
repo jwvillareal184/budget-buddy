@@ -21,7 +21,7 @@ export function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.post('http://localhost:3001/user/login', { email, password })
+    axios.post(`${process.env.REACT_APP_BACKEND_URL}user/login`, { email, password })
       .then(result => {
         localStorage.setItem('token', result.data.token);
         localStorage.setItem('user', JSON.stringify(result.data.user)); 

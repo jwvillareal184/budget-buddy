@@ -14,7 +14,7 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.get('http://localhost:3001/user/me', {
+      axios.get(`${process.env.REACT_APP_BACKEND_URL}user/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       .then(res => setUser(res.data.user))
