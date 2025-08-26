@@ -14,7 +14,7 @@ const weatherRoutes = require('./Routes/weatherRoutes');
 
 // 3. Middleware
 app.use(cors(
-    {origin: 'https://budget-buddy-front.onrender.com' // your React frontend dev URL
+    {origin: 'https://budget-buddy-front-end.onrender.com' // your React frontend dev URL
   }
 ));                            // Enable CORS first
 app.use(express.json());                    // Then parse JSON body

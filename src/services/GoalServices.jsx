@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/goals`;
+const BASE_URL = `${process.env.BACKEND_URL}/goals`;
 
 export const fetchGoals = async (userId) => {
     const response = await axios.get(`${BASE_URL}/by-user`, {

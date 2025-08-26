@@ -37,7 +37,7 @@ export function SignUp() {
           alert('Password must be at least 8 characters and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
           return;
         }
-        axios.post(`${process.env.REACT_APP_BACKEND_URL}user/register`, userData)
+        axios.post(`${process.env.BACKEND_URL}user/register`, userData)
           .then(response => {
             alert('User registered successfully!');
             setUserData({
