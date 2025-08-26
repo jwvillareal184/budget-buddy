@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}user`;
+const BASE_URL = `${process.env.REACT_APP_BACKEND_URL}/user`;
 
 export const fetchUserInfo = async () => {
     const token = localStorage.getItem('token');
